@@ -1,5 +1,7 @@
 # Pong Game
 
+![Screenshot](./assets/demo.gif)
+
 A responsive, browser-based Pong clone featuring:
 
 - **Player vs Computer**: Control your paddle; play against the CPU (with optional "Unbeatable" mode).
@@ -18,6 +20,8 @@ A responsive, browser-based Pong clone featuring:
 - **Score Tracking**: First to 5 points wins; displays "Player has won!" or "Computer has won!"
 - **Responsive Design**: Works on desktop and mobile (touch and drag controls)
 - **Live Speed Display**: Current ball speed shown on desktop
+
+### [Live Demo Link (https://jmjspong.netlify.app/)](https://jmjspong.netlify.app/)
 
 ---
 
