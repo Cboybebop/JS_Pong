@@ -1,71 +1,62 @@
-# Pong Game
+# VectorPong
 
-![Screenshot](./assets/demo.gif)
+A modern vector-based Pong game built with **Phaser 4** and **TypeScript**.
 
-A responsive, browser-based Pong clone featuring:
+## Game Modes
 
-- **Player vs Computer**: Control your paddle; play against the CPU (with optional "Unbeatable" mode).
-- **Adjustable Difficulty**: Enable "CPU Mode" for a fully automated match.
-- **Dynamic Ball Speed**: Ball speed increases by 0.01 on each paddle hit (unless "No Speed" is enabled).
-- **Power Ups** (max one per 2 minutes):
-  - **Speed Up** (▲): +0.5 to ball speed
-  - **Speed Down** (▼): –0.5 to ball speed (min 0.5)
-  - **Double Paddle** (↻): Doubles the last‑hit paddle for 30 seconds
-- **Optional Settings** (via tick boxes):
-  - **Unbeatable**: CPU paddle never misses
-  - **2× Paddle**: Both paddles are twice the height
-  - **No Speed**: Disables incremental speed increases
-  - **CPU Mode**: CPU controls both paddles
-- **Spark Effects**: Particle sparks once ball speed ≥ 5
-- **Score Tracking**: First to 5 points wins; displays "Player has won!" or "Computer has won!"
-- **Responsive Design**: Works on desktop and mobile (touch and drag controls)
-- **Live Speed Display**: Current ball speed shown on desktop
+- **Standard** — Classic retro pong with green-on-black CRT aesthetics, scanline overlay, and chiptune sounds. 1v1.
+- **Modern** — Neon vector visuals with bloom/glow filters, particle trails, and 7 power-ups. 1v1.
+- **Multiplayer** — Up to 4 players, one paddle per screen edge, free-for-all with power-ups.
 
-### [Live Demo Link (https://jmjspong.netlify.app/)](https://jmjspong.netlify.app/)
+## Power-Ups (Modern & Multiplayer)
 
----
-
-## Getting Started
-
-1. **Clone or Download** this repository.
-2. **Open** `pong_app.html` in any modern desktop or mobile browser.
-3. **Press any key** (or tap) on the start overlay to begin the game.
+- **Multiball (×10)** — Spawns 9 extra balls for 6 seconds
+- **Slow Opponent** — Halves opponent speed for 8s
+- **Speed Boost** — Doubles your paddle speed for 8s
+- **Big Paddle** — Increases your paddle 50% for 10s
+- **Shrink Opponent** — Shrinks opponent paddle 50% for 10s
+- **Fireball** — Ball passes through opponent paddle once
+- **Shield** — Temporary wall behind your paddle for 10s
 
 ## Controls
 
-- **Desktop**
+- **Player 1**: W / S
+- **Player 2**: ↑ / ↓
+- **Player 3**: I / K
+- **Player 4**: Numpad 8 / 5
+- **Gamepad**: Left stick / D-pad (auto-detected per player slot)
+- **Mobile**: Touch zones (left/right halves for 2P, quadrants for 4P)
 
-  - Arrow Up / Arrow Down: Move your paddle
-  - Check/uncheck options: Toggle settings
-  - Click ☰ on mobile to show options menu
+## Setup
 
-- **Mobile**
-
-  - Touch and drag on left side: Move your paddle
-  - Tap start overlay to begin
-  - Use the ☰ button to access options
-
-## File Structure
-
-```
-pong_app.html    # Main game file (HTML, CSS, JS)
-README.md        # This file
+```bash
+npm install
+npm run dev      # Start dev server at localhost:8080
+npm run build    # Production build to dist/
 ```
 
-## Options & Settings
+## Supabase (High Scores)
 
-| Option     | Description                                              |
-| ---------- | -------------------------------------------------------- |
-| Unbeatable | CPU paddle will never miss the ball                      |
-| 2× Paddle  | Both paddles instantly double their height               |
-| No Speed   | Prevents the ball speed from increasing after collisions |
-| CPU Mode   | Computer controls both paddles                           |
+1. Create a Supabase project
+2. Run the SQL from the plan to create `vctpng_scores` table with RLS policies
+3. Copy `.env.example` to `.env.local` and fill in your credentials:
 
-Power up types appear randomly (≤1 every 2 minutes) in the play area.
+```
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
 
-## Customisation
+The game works fully without Supabase — the leaderboard simply won't appear.
 
-- Tweak `baseSpeed` in the `Ball` class for a faster or slower start.
-- Modify spark count or lifetime in the `Spark` class for different effects.
-- Adjust power‑up durations and spawn intervals in the script.
+## Deploy to Netlify
 
+The included `netlify.toml` handles everything. Set `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as environment variables in the Netlify dashboard.
+
+## Tech Stack
+
+- **Phaser 4** (RC7) — Game framework with Arcade Physics, Filters (Glow, Bloom, Vignette), Particles
+- **Vite** — Build tool with hot reload
+- **TypeScript** — Type safety
+- **Supabase** — PostgreSQL leaderboard (optional)
+- **Netlify** — Static hosting
+- **Web Audio API** — Procedural sound effects (no audio files needed)

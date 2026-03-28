@@ -1,0 +1,22 @@
+{
+  "name": "vectorpong",
+  "version": "1.0.0",
+  "description": "A modern vector-based Pong game built with Phaser 4",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["phaser", "pong", "game"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.100.1",
+    "phaser": "^4.0.0-rc.7"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.2",
+    "vite": "^8.0.3"
+  }
+}
