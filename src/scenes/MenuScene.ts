@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SCENES, GAME_WIDTH, GAME_HEIGHT, COLORS, GameMode } from '../constants.ts';
+import { SCENES, GAME_WIDTH, GAME_HEIGHT, COLORS, GameMode, PlayerConfig } from '../constants.ts';
 
 export class MenuScene extends Phaser.Scene {
     constructor() {
@@ -76,6 +76,16 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private startGame(mode: GameMode): void {
-        this.scene.start(SCENES.GAME, { mode, playerCount: mode === 'multiplayer' ? 4 : 2 });
+        if (mode === 'multiplayer') {
+            // Go to lobby for player setup
+            this.scene.start(SCENES.LOBBY);
+        } else {
+            // 1v1 vs CPU (medium) by default
+            const players: PlayerConfig[] = [
+                { inputType: 'keyboard', label: 'P1' },
+                { inputType: 'cpu-medium', label: 'CPU (MED)' },
+            ];
+            this.scene.start(SCENES.GAME, { mode, playerCount: 2, players });
+        }
     }
 }

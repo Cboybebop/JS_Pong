@@ -38,7 +38,7 @@ export const COLORS = {
     RETRO_DIM: 0x115511,
 
     // Modern (Modern/Multiplayer mode)
-    MODERN_BG: 0x0a0a1a,
+    MODERN_BG: 0x0d1025,
     NEON_CYAN: 0x00ffff,
     NEON_MAGENTA: 0xff00ff,
     NEON_YELLOW: 0xffff00,
@@ -54,10 +54,41 @@ export const COLORS = {
 // Game modes
 export type GameMode = 'standard' | 'modern' | 'multiplayer';
 
+// Input types for player configuration
+export type InputType = 'keyboard' | 'gamepad' | 'cpu-easy' | 'cpu-medium' | 'cpu-hard';
+
+export interface PlayerConfig {
+    inputType: InputType;
+    label: string; // display name e.g. "P1", "CPU (Hard)"
+}
+
+// CPU difficulty settings
+export const CPU_DIFFICULTY = {
+    'cpu-easy': {
+        reactionDelay: 300,   // ms before reacting to ball change
+        errorMargin: 60,      // px offset from ideal position
+        speedFactor: 0.55,    // fraction of paddle speed used
+        predictionNoise: 80,  // px noise on ball prediction
+    },
+    'cpu-medium': {
+        reactionDelay: 140,
+        errorMargin: 25,
+        speedFactor: 0.78,
+        predictionNoise: 35,
+    },
+    'cpu-hard': {
+        reactionDelay: 50,
+        errorMargin: 8,
+        speedFactor: 0.95,
+        predictionNoise: 10,
+    },
+};
+
 // Scenes
 export const SCENES = {
     BOOT: 'BootScene',
     MENU: 'MenuScene',
+    LOBBY: 'LobbyScene',
     GAME: 'GameScene',
     PAUSE: 'PauseScene',
     GAME_OVER: 'GameOverScene',

@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { GAME_WIDTH, GAME_HEIGHT } from './constants.ts';
 import { BootScene } from './scenes/BootScene.ts';
 import { MenuScene } from './scenes/MenuScene.ts';
+import { LobbyScene } from './scenes/LobbyScene.ts';
 import { GameScene } from './scenes/GameScene.ts';
 import { GameOverScene } from './scenes/GameOverScene.ts';
 
@@ -24,5 +25,5 @@ export const gameConfig: Phaser.Types.Core.GameConfig = {
     input: {
         gamepad: true,
     },
-    scene: [BootScene, MenuScene, GameScene, GameOverScene],
+    scene: [BootScene, MenuScene, LobbyScene, GameScene, GameOverScene],
 };

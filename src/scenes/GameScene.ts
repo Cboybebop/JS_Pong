@@ -1,29 +1,33 @@
 import Phaser from 'phaser';
 import {
     SCENES, GAME_WIDTH, GAME_HEIGHT, COLORS,
-    PADDLE_MARGIN, SCORE_TO_WIN, GameMode,
+    PADDLE_MARGIN, SCORE_TO_WIN, GameMode, PlayerConfig, InputType,
 } from '../constants.ts';
 import { Paddle } from '../objects/Paddle.ts';
 import { Ball } from '../objects/Ball.ts';
 import { InputManager } from '../managers/InputManager.ts';
 import { AudioManager } from '../managers/AudioManager.ts';
 import { PowerUpManager } from '../managers/PowerUpManager.ts';
+import { CPUController } from '../managers/CPUController.ts';
 
 interface GameSceneData {
     mode: GameMode;
     playerCount: number;
+    players?: PlayerConfig[];
 }
 
 export class GameScene extends Phaser.Scene {
     // Mode
     private mode: GameMode = 'standard';
     private playerCount: number = 2;
+    private playerConfigs: PlayerConfig[] = [];
 
     // Game objects
     private paddles: Paddle[] = [];
     private ball!: Ball;
     private allBalls: Ball[] = []; // for multiball tracking
     private inputManager!: InputManager;
+    private cpuControllers: Map<number, CPUController> = new Map();
     private powerUpManager?: PowerUpManager;
 
     // Scoring
@@ -51,10 +55,20 @@ export class GameScene extends Phaser.Scene {
     init(data: GameSceneData): void {
         this.mode = data.mode || 'standard';
         this.playerCount = data.playerCount || 2;
+        this.playerConfigs = data.players || this.defaultPlayerConfigs();
         this.scores = new Array(this.playerCount).fill(0);
         this.paddles = [];
         this.scoreTexts = [];
+        this.cpuControllers = new Map();
         this.isServing = true;
+    }
+
+    /** Default configs when launched directly (Standard/Modern from menu) */
+    private defaultPlayerConfigs(): PlayerConfig[] {
+        return [
+            { inputType: 'keyboard', label: 'P1' },
+            { inputType: 'cpu-medium', label: 'CPU (MED)' },
+        ];
     }
 
     create(): void {
@@ -86,8 +100,19 @@ export class GameScene extends Phaser.Scene {
         // Setup collisions
         this.setupCollisions();
 
-        // Setup input
+        // Setup input (only for human players)
         this.inputManager = new InputManager(this, this.playerCount);
+
+        // Setup CPU controllers for CPU players
+        for (const paddle of this.paddles) {
+            const config = this.playerConfigs[paddle.playerIndex];
+            if (config && config.inputType.startsWith('cpu')) {
+                this.cpuControllers.set(
+                    paddle.playerIndex,
+                    new CPUController(this, paddle, config.inputType)
+                );
+            }
+        }
 
         // Power-ups for modern/multiplayer
         if (this.mode !== 'standard') {
@@ -122,8 +147,15 @@ export class GameScene extends Phaser.Scene {
     update(): void {
         // Process paddle input
         for (const paddle of this.paddles) {
-            const input = this.inputManager.getInput(paddle.playerIndex);
-            paddle.move(input.movement);
+            const cpu = this.cpuControllers.get(paddle.playerIndex);
+            if (cpu) {
+                // CPU-controlled paddle
+                paddle.move(cpu.update(this.allBalls));
+            } else {
+                // Human-controlled paddle
+                const input = this.inputManager.getInput(paddle.playerIndex);
+                paddle.move(input.movement);
+            }
         }
 
         // Check scoring (ball out of bounds)
@@ -146,8 +178,17 @@ export class GameScene extends Phaser.Scene {
 
     private drawCenterLine(): void {
         const gfx = this.add.graphics();
-        const color = this.mode === 'standard' ? COLORS.RETRO_DIM : 0x222244;
-        gfx.lineStyle(2, color, 0.5);
+        const isModern = this.mode !== 'standard';
+        const color = isModern ? 0x334466 : COLORS.RETRO_DIM;
+        const alpha = isModern ? 0.6 : 0.5;
+        gfx.lineStyle(2, color, alpha);
+
+        // Border lines for modern mode
+        if (isModern) {
+            gfx.lineStyle(1, 0x223355, 0.4);
+            gfx.strokeRect(4, 4, GAME_WIDTH - 8, GAME_HEIGHT - 8);
+            gfx.lineStyle(2, color, alpha);
+        }
 
         if (this.mode === 'multiplayer') {
             // Draw cross
@@ -278,8 +319,8 @@ export class GameScene extends Phaser.Scene {
             this.ball.enableFilters();
             this.ball.filters?.internal.addGlow(0xffffff, 6, 0);
 
-            // Camera vignette
-            this.cameras.main.filters.external.addVignette(0.5, 0.5, 0.35);
+            // Camera vignette (lighter so it doesn't obscure gameplay)
+            this.cameras.main.filters.external.addVignette(0.5, 0.5, 0.6);
         } catch {
             // Filters not available (Canvas fallback) — skip silently
         }
