@@ -38,7 +38,8 @@ export const COLORS = {
     RETRO_DIM: 0x115511,
 
     // Modern (Modern/Multiplayer mode)
-    MODERN_BG: 0x0d1025,
+    MODERN_BG: 0x9fdcff,
+    MULTIPLAYER_BG: 0x0d1025,
     NEON_CYAN: 0x00ffff,
     NEON_MAGENTA: 0xff00ff,
     NEON_YELLOW: 0xffff00,

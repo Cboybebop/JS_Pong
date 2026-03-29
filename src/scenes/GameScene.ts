@@ -76,7 +76,11 @@ export class GameScene extends Phaser.Scene {
         this.audio = new AudioManager(this.mode === 'standard');
 
         // Set background based on mode
-        const bgColor = this.mode === 'standard' ? COLORS.RETRO_BG : COLORS.MODERN_BG;
+        const bgColor = this.mode === 'standard'
+            ? COLORS.RETRO_BG
+            : this.mode === 'modern'
+                ? COLORS.MODERN_BG
+                : COLORS.MULTIPLAYER_BG;
         this.cameras.main.setBackgroundColor(bgColor);
 
         // Disable world bounds on scoring edges based on mode
