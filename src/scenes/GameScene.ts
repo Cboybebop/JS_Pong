@@ -187,8 +187,8 @@ export class GameScene extends Phaser.Scene {
         const alpha = isModern ? 0.6 : 0.5;
         gfx.lineStyle(2, color, alpha);
 
-        // Border lines for modern mode
-        if (isModern) {
+        // Border lines for multiplayer only (modern mode uses clean gradient edges)
+        if (this.mode === 'multiplayer') {
             gfx.lineStyle(1, 0x223355, 0.4);
             gfx.strokeRect(4, 4, GAME_WIDTH - 8, GAME_HEIGHT - 8);
             gfx.lineStyle(2, color, alpha);
@@ -301,6 +301,10 @@ export class GameScene extends Phaser.Scene {
     }
 
     private setupModernEffects(): void {
+        if (this.mode === 'modern') {
+            this.createModernGradientBackground();
+        }
+
         // Ball particle trail
         this.ballTrailEmitter = this.add.particles(0, 0, undefined, {
             speed: { min: 10, max: 30 },
@@ -323,11 +327,36 @@ export class GameScene extends Phaser.Scene {
             this.ball.enableFilters();
             this.ball.filters?.internal.addGlow(0xffffff, 6, 0);
 
-            // Camera vignette (lighter so it doesn't obscure gameplay)
-            this.cameras.main.filters.external.addVignette(0.5, 0.5, 0.6);
+            // Keep modern visuals crisp without dark edge vignette
         } catch {
             // Filters not available (Canvas fallback) — skip silently
         }
+    }
+
+    private createModernGradientBackground(): void {
+        const textureKey = 'modern-gradient-bg';
+        if (!this.textures.exists(textureKey)) {
+            const texture = this.textures.createCanvas(textureKey, GAME_WIDTH, GAME_HEIGHT);
+            if (!texture) {
+                return;
+            }
+            const ctx = texture.getContext();
+            const radius = Math.max(GAME_WIDTH, GAME_HEIGHT) * 0.7;
+            const gradient = ctx.createRadialGradient(
+                GAME_WIDTH / 2, GAME_HEIGHT / 2, 60,
+                GAME_WIDTH / 2, GAME_HEIGHT / 2, radius,
+            );
+
+            gradient.addColorStop(0, '#d8f2ff');
+            gradient.addColorStop(0.55, '#a9deff');
+            gradient.addColorStop(1, '#7ebee8');
+
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+            texture.refresh();
+        }
+
+        this.add.image(GAME_WIDTH / 2, GAME_HEIGHT / 2, textureKey).setDepth(-1000);
     }
 
     private createScanlines(): void {
