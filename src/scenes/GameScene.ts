@@ -347,9 +347,9 @@ export class GameScene extends Phaser.Scene {
                 GAME_WIDTH / 2, GAME_HEIGHT / 2, radius,
             );
 
-            gradient.addColorStop(0, '#d8f2ff');
-            gradient.addColorStop(0.55, '#a9deff');
-            gradient.addColorStop(1, '#7ebee8');
+            gradient.addColorStop(0, '#2fa9e7');
+            gradient.addColorStop(0.55, '#186ca0');
+            gradient.addColorStop(1, '#146398');
 
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
